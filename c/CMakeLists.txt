@@ -14,3 +14,5 @@ target_include_directories(AI INTERFACE core/)
 add_executable(main drivers/main.cpp)
 target_link_libraries(main AI)
 
+target_compile_features(main PRIVATE cxx_std_17)
+

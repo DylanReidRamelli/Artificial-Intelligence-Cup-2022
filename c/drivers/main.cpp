@@ -1,7 +1,6 @@
 #include "io_tsp.hpp"
 #include "utils.hpp"
 #include <filesystem>
-#include <glob.h>
 #include <iostream>
 #include <vector>
 
@@ -18,24 +17,26 @@ void run(const bool show_plots = false, const bool verbose = false) {
   }
 
   for (const auto &entry : std::filesystem::directory_iterator(folder)) {
-    const auto full_name = entry.path().string();
+    fs::path full_name = entry.path();
+    full_name = fs::absolute(full_name);
+    full_name = full_name.string();
 
     if (entry.is_regular_file()) {
       const auto base_name = entry.path().filename().string();
-      /* Match the file, probably std::regex_match.. */
       file_list.push_back(full_name);
     }
   }
 
   // Iterate over the problems
 
-  for (auto problem_path : file_list) {
-    // Create ProblemInstance.
+  // for (auto problem_path : file_list) {
+  // Create ProblemInstance.
+  ProblemInstance problem(file_list[0]);
+  // std::cout << problem_path << std::endl;
+  // Choose solver.
 
-    // Choose solver.
-
-    // Chose improve.
-  }
+  // Chose improve.
+  // }
 }
 
 int main(int argv, const char *argc[]) {

@@ -29,14 +29,14 @@ void run(const bool show_plots = false, const bool verbose = false) {
 
   // Iterate over the problems
 
-  // for (auto problem_path : file_list) {
-  // Create ProblemInstance.
-  ProblemInstance problem(file_list[0]);
-  // std::cout << problem_path << std::endl;
-  // Choose solver.
+  for (auto problem_path : file_list) {
+    // Create ProblemInstance.
+    ProblemInstance problem(problem_path);
+    // std::cout << problem_path << std::endl;
+    // Choose solver.
 
-  // Chose improve.
-  // }
+    // Chose improve.
+  }
 }
 
 int main(int argv, const char *argc[]) {

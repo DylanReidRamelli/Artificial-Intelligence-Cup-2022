@@ -7,9 +7,16 @@ project(
   DESCRIPTION "Artificial intelligence TSP solver")
 
 
+find_package(Boost)
+
 
 add_library(AI INTERFACE)
 target_include_directories(AI INTERFACE core/)
+
+if(Boost_FOUND)
+  include_directories(${Boost_INCLUDE_DIRS}) 
+  target_link_libraries(AI ${Boost_LIBRARIES})
+endif()
 
 add_executable(main drivers/main.cpp)
 target_link_libraries(main AI)

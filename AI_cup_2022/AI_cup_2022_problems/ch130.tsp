@@ -1,4 +1,4 @@
-NAME: ch130
+NAME : ch130
 TYPE: TSP
 COMMENT: 130 city problem (Churritz)
 DIMENSION: 130

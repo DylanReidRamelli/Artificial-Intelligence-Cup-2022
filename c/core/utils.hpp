@@ -1,5 +1,6 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
+#include <cmath>
 #include <vector>
 
 int compute_length(std::vector<int> solution,
@@ -16,6 +17,14 @@ int compute_length(std::vector<int> solution,
   return total_length;
 }
 
-// int distance_euc(const float)
+int distance_euc(std::vector<float> points_x, std::vector<float> points_y) {
+  int rounding = 0;
+  float x_i = points_x[0];
+  float y_i = points_x[1];
+  float x_j = points_y[0];
+  float y_j = points_y[1];
+  float distance = sqrt(pow((x_i - x_j), 2) + pow((y_i - y_j), 2));
+  return floor(distance);
+}
 
 #endif

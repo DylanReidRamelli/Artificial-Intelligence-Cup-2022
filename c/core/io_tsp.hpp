@@ -4,8 +4,6 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <sstream>
-#include <stdio.h>
 #include <string>
 #include <vector>
 class ProblemInstance {
@@ -26,11 +24,14 @@ public:
     file_name_ = name_tsp;
     std::vector<std::string> data = read_file(file_name_);
 
+    // store data set information
     std::vector<std::string> t;
-    std::string first_line = data[0];
     boost::split(t, data[0], boost::is_any_of(": "));
     name_ = t[t.size() - 1];
-    std::cout << name_ << std::endl;
+    boost::split(t, data[3], boost::is_any_of(": "));
+    nPoints_ = std::stoi(t[t.size() - 1]);
+    boost::split(t, data[5], boost::is_any_of(": "));
+    best_sol_ = std::stoi(t[t.size() - 1]);
   }
 
 private:
@@ -38,8 +39,8 @@ private:
   std::vector<int> optimal_tour_;
   std::vector<std::vector<int>> dist_matrix_;
   std::string name_;
-  std::vector<int> nPoints_;
-  std::vector<float> best_sol_;
+  int nPoints_;
+  int best_sol_;
   std::vector<std::vector<float>> points_;
   std::string file_name_;
 };

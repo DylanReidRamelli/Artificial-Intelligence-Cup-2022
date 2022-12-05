@@ -32,7 +32,6 @@ void run(const bool show_plots = false, const bool verbose = false) {
   for (auto problem_path : file_list) {
     // Create ProblemInstance.
     ProblemInstance problem(problem_path);
-    // std::cout << problem_path << std::endl;
     // Choose solver.
 
     // Chose improve.

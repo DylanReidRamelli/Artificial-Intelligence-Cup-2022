@@ -18,6 +18,10 @@ if(Boost_FOUND)
   target_link_libraries(AI ${Boost_LIBRARIES})
 endif()
 
+
+add_executable(antmain ../../crazyAnts.c)
+target_link_libraries(antmain AI)
+
 add_executable(main drivers/main.cpp)
 target_link_libraries(main AI)
 

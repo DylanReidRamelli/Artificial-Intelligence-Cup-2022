@@ -33,6 +33,8 @@ public:
     nPoints_ = std::stoi(t[t.size() - 1]);
     boost::split(t, data[5], boost::is_any_of(": "));
     best_sol_ = std::stoi(t[t.size() - 1]);
+
+    create_dist_matrix();
   }
 
   void print_info() {
@@ -47,8 +49,8 @@ public:
     dist_matrix_.resize(nPoints_ * nPoints_);
     for (int i = 0; i < nPoints_; i++) {
       for (int j = i; j < nPoints_; j++) {
-        std::vector<float> rowi points_[i];
-        std::vector<float> rowj points_[j];
+        std::vector<float> rowi = points_[i];
+        std::vector<float> rowj = points_[j];
         auto firsti = rowi.begin() + 1;
         auto lasti = rowi.begin() + 3;
         auto firstj = rowj.begin() + 1;
@@ -56,11 +58,9 @@ public:
         std::vector<float> subi(firsti, lasti);
         std::vector<float> subj(firstj, lastj);
 
-        dist_matrix_[i][j] = distance_euc(subi, subj);
+        dist_matrix_[j][i] = distance_euc(subi, subj);
       }
     }
-
-    // dist_matrix need be transposed.
   }
 
 private:

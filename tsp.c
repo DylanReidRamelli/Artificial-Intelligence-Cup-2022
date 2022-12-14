@@ -7,6 +7,9 @@
 
 /* Author: Johan Jacob */
 
+// Example:./tsp AI_cup_2016_problems/eil76.tsp 3 eil_result.txt
+
+
 static int dim;
 static  int * distances;
 static double * pheromone;

@@ -44,4 +44,14 @@ void calculate_distance(std::vector<std::vector<int>> nodes,
   }
 }
 
+int calculate_solution_cost(std::vector<int> shortest_path,
+                            std::vector<std::vector<int>> distances, int dim) {
+  int sum = 0;
+  for (size_t i = 0; i < dim - 1; i++) {
+    sum += distances[shortest_path[i]][shortest_path[i + 1]];
+  }
+  sum += distances[shortest_path[dim - 1]][shortest_path[0]];
+  return sum;
+}
+
 #endif

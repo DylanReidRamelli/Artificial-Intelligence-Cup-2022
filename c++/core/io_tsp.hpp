@@ -38,25 +38,25 @@ public:
   }
 
   void print_info() {
-    std::cout << "\n\n#############################";
-    std::cout << 'name: ' << name_;
-    std::cout << 'nPoints: ' << nPoints_;
-    std::cout << 'best_sol: ' << best_sol_;
-    std::cout << 'exist optimal: ' << exist_opt_;
+    std::cout << "\n\n#############################\n";
+    std::cout << "name: " << name_ << std::endl;
+    std::cout << "nPoints: " << nPoints_ << std::endl;
+    std::cout << "best_sol: " << best_sol_ << std::endl;
+    std::cout << "exist optimal: " << exist_opt_ << std::endl;
   }
 
   void create_dist_matrix() {
     dist_matrix_.resize(nPoints_ * nPoints_);
     for (int i = 0; i < nPoints_; i++) {
       for (int j = i; j < nPoints_; j++) {
-        std::vector<float> rowi = points_[i];
-        std::vector<float> rowj = points_[j];
+        std::vector<int> rowi = points_[i];
+        std::vector<int> rowj = points_[j];
         auto firsti = rowi.begin() + 1;
         auto lasti = rowi.begin() + 3;
         auto firstj = rowj.begin() + 1;
         auto lastj = rowj.begin() + 3;
-        std::vector<float> subi(firsti, lasti);
-        std::vector<float> subj(firstj, lastj);
+        std::vector<int> subi(firsti, lasti);
+        std::vector<int> subj(firstj, lastj);
 
         dist_matrix_[j][i] = distance_euc(subi, subj);
       }
@@ -70,7 +70,7 @@ private:
   std::string name_;
   int nPoints_;
   int best_sol_;
-  std::vector<std::vector<float>> points_;
+  std::vector<std::vector<int>> points_;
   std::string file_name_;
 };
 

@@ -1,7 +1,3 @@
-#ifndef ACS_H
-#define ACS_H
-#include "io_tsp.h"
-
 typedef struct {
   int start_node;
   int index;
@@ -11,11 +7,89 @@ typedef struct {
   double cost;
 } ANT;
 
-void nearest_neighbor(int *sol, int distances[dim_][dim_], int *new_sol) {
-  int start_node = rand() % dim_; // index of randomly selected node
+#include "io_tsp.h"
+#include "utils.h"
+
+void clean_ants(ANT **nest, int swarm_count) {
+  ANT *a1;
+  for (int i = 0; i < swarm_count; i++) {
+    a1 = nest[i];
+    a1->start_node = rand() % dim;
+    a1->index = 0;
+    a1->cost = 9999;
+    for (int j = 0; j < dim; j++) {
+      a1->visited[j] = 0;
+      a1->trail[j] = 0;
+    }
+    a1->trail[a1->index] = a1->start_node;
+    a1->visited[a1->start_node] = 1;
+    a1->index++;
+  }
+}
+
+int exploit(ANT *a, int pos, int *visited, double pheromone[dim][dim],
+            int distances[dim][dim]) {
+  double tau, eta, value;
+  // printf("%d\n", a->index);
+  // int pos = a->trail[a->index-1];
+  double beta = 2.0;
+  double max = -1;
+  int node = -1;
+  for (int k = 0; k < dim; k++) {
+    tau = pheromone[pos][k];
+    eta = pow((1.0 / (double)distances[pos][k]), beta);
+    value = tau * eta;
+    if (value > max && visited[k] == 0 && pos != k) {
+      max = value;
+      node = k;
+    }
+  }
+  return node;
+}
+int explore(ANT *a, int pos, double pheromone[dim][dim],
+            int distances[dim][dim]) {
+  double tau, eta, value, rnd, d;
+  double sigma = 0;
+  double S[dim];
+  double beta = 2.0;
+  int node = -1;
+  // int pos = a->trail[a->index-1];
+  // calculate probability
+  for (int i = 0; i < dim; i++) {
+    if (a->visited[i] == 0) {
+      tau = pheromone[pos][i];
+      eta = pow((1.0 / (double)distances[pos][i]), beta);
+      value = tau * eta;
+      S[i] = value;
+      sigma += value;
+    } else {
+      S[i] = 0;
+    }
+  }
+  for (int i = 0; i < dim; i++) {
+    S[i] = S[i] / sigma;
+  }
+
+  // Pick a random edge
+  rnd = (double)rand() / ((double)RAND_MAX);
+  // printf("%lf\n", rnd);
+  d = 0;
+  for (int i = 0; i < dim; i++) {
+    d += S[i];
+    if (rnd < d && S[i] != 0) {
+      //    printf("%lf\t %lf\t %d\n", rnd,d,i);
+      node = i;
+      return node;
+    }
+  }
+  return node;
+}
+
+void nearest_neighbor(int *sol, int distances[dim][dim], int *new_sol) {
+  int start_node = rand() % dim; // index of randomly selected node
   // int start_node = find_index(sol,0);
-  int visited[dim_];
-  for (int i = 0; i < dim_; i++) {
+  int visited[dim];
+  for (int i = 0; i < dim; i++) {
     visited[i] = 0;
   }
   visited[sol[start_node]] = 1;
@@ -23,9 +97,9 @@ void nearest_neighbor(int *sol, int distances[dim_][dim_], int *new_sol) {
   int nearest;
   int value;
   int index = sol[start_node];
-  for (int j = 1; j < dim_; j++) {
+  for (int j = 1; j < dim; j++) {
     value = distances[0][0];
-    for (size_t k = 0; k < dim_; k++) {
+    for (size_t k = 0; k < dim; k++) {
       if (distances[index][k] <= value && visited[k] == 0) {
         nearest = k;
         value = distances[index][nearest];
@@ -39,15 +113,15 @@ void nearest_neighbor(int *sol, int distances[dim_][dim_], int *new_sol) {
 }
 
 int check_valid(int *sol) {
-  int visited[dim_];
-  for (size_t i = 0; i < dim_; i++) {
+  int visited[dim];
+  for (size_t i = 0; i < dim; i++) {
     visited[i] = 0;
   }
-  for (size_t j = 0; j < dim_; j++) {
+  for (size_t j = 0; j < dim; j++) {
     int node = sol[j];
     visited[node] = visited[node] += 1;
   }
-  for (int k = 0; k < dim_; k++) {
+  for (int k = 0; k < dim; k++) {
     if (visited[k] != 1) {
       // printf("%d\t%d\t%d\n",sol[0],k,visited[k] );
       // printf("%s\n", "Invalid Tour");
@@ -56,12 +130,12 @@ int check_valid(int *sol) {
   }
   return 0;
 }
-void global_pheromone_update(ANT *best, double pheromone[dim_][dim_],
+void global_pheromone_update(ANT *best, double pheromone[dim][dim],
                              double alpha) {
   int node1, node2;
   double phi, delta;
   delta = 1.0 / best->cost;
-  for (size_t i = 0; i < dim_ - 1; i++) {
+  for (size_t i = 0; i < dim - 1; i++) {
     node1 = best->trail[i];
     node2 = best->trail[i + 1];
     phi = pheromone[node1][node2];
@@ -69,14 +143,14 @@ void global_pheromone_update(ANT *best, double pheromone[dim_][dim_],
     pheromone[node2][node1] = pheromone[node1][node2];
   }
   node1 = best->trail[0];
-  node2 = best->trail[dim_ - 1];
+  node2 = best->trail[dim - 1];
   phi = pheromone[node1][node2];
   pheromone[node1][node2] = ((1 - alpha) * phi) + (alpha * delta);
   pheromone[node2][node1] = pheromone[node1][node2];
 }
 
-void acs(ANT **nest, int swarm_count, int distances[dim_][dim_],
-         double pheromone[dim_][dim_], int *shortest_path) {
+void acs(ANT **nest, int swarm_count, int distances[dim][dim],
+         double pheromone[dim][dim], int *shortest_path) {
   // declare variables
   ANT best;
   int i, j; // loop indices
@@ -98,7 +172,7 @@ void acs(ANT **nest, int swarm_count, int distances[dim_][dim_],
     a = nest[i];
     pos = a->start_node;
     printf("%d\n", pos);
-    for (j = 0; j < dim_; j++) { // pick cities
+    for (j = 0; j < dim; j++) { // pick cities
       q = rand() % 100;
       if (q <= 94) {
         node = exploit(a, pos, a->visited, pheromone, distances);
@@ -108,7 +182,7 @@ void acs(ANT **nest, int swarm_count, int distances[dim_][dim_],
         node = explore(a, pos, pheromone, distances);
       }
       // add the node
-      if (a->visited[node] == 0 && node != -1 && a->index < dim_) {
+      if (a->visited[node] == 0 && node != -1 && a->index < dim) {
         a->trail[a->index] = node;
         tau = pheromone[pos][node];
         // local pheromone update (symmetric)
@@ -125,7 +199,7 @@ void acs(ANT **nest, int swarm_count, int distances[dim_][dim_],
     // update ant details
     valid = check_valid(a->trail);
     if (valid == 0 && flag != 1) {
-      a->cost = calculate_solution_cost(a->trail, dim_, distances);
+      a->cost = calculate_solution_cost(a->trail, dim, distances);
     } else {
       a->cost = 99999999;
     }
@@ -134,7 +208,7 @@ void acs(ANT **nest, int swarm_count, int distances[dim_][dim_],
     if (nest[i]->cost < min) {
       min = nest[i]->cost;
       // best = *nest[i];
-      for (size_t j = 0; j < dim_; j++) {
+      for (size_t j = 0; j < dim; j++) {
         best.trail[j] = nest[i]->trail[j];
         shortest_path[j] = nest[i]->trail[j];
       }
@@ -142,79 +216,3 @@ void acs(ANT **nest, int swarm_count, int distances[dim_][dim_],
   }
   global_pheromone_update(&best, pheromone, alpha);
 }
-
-int exploit(ANT *a, int pos, int *visited, double pheromone[dim_][dim_],
-            int distances[dim_][dim_]) {
-  double tau, eta, value;
-  // printf("%d\n", a->index);
-  // int pos = a->trail[a->index-1];
-  double beta = 2.0;
-  double max = -1;
-  int node = -1;
-  for (int k = 0; k < dim_; k++) {
-    tau = pheromone[pos][k];
-    eta = pow((1.0 / (double)distances[pos][k]), beta);
-    value = tau * eta;
-    if (value > max && visited[k] == 0 && pos != k) {
-      max = value;
-      node = k;
-    }
-  }
-  return node;
-}
-int explore(ANT *a, int pos, double pheromone[dim_][dim_],
-            int distances[dim_][dim_]) {
-  double tau, eta, value, rnd, d;
-  double sigma = 0;
-  double S[dim_];
-  double beta = 2.0;
-  int node = -1;
-  // int pos = a->trail[a->index-1];
-  // calculate probability
-  for (int i = 0; i < dim_; i++) {
-    if (a->visited[i] == 0) {
-      tau = pheromone[pos][i];
-      eta = pow((1.0 / (double)distances[pos][i]), beta);
-      value = tau * eta;
-      S[i] = value;
-      sigma += value;
-    } else {
-      S[i] = 0;
-    }
-  }
-  for (int i = 0; i < dim_; i++) {
-    S[i] = S[i] / sigma;
-  }
-
-  // Pick a random edge
-  rnd = (double)rand() / ((double)RAND_MAX);
-  // printf("%lf\n", rnd);
-  d = 0;
-  for (int i = 0; i < dim_; i++) {
-    d += S[i];
-    if (rnd < d && S[i] != 0) {
-      //    printf("%lf\t %lf\t %d\n", rnd,d,i);
-      node = i;
-      return node;
-    }
-  }
-  return node;
-}
-void clean_ants(ANT **nest, int swarm_count) {
-  ANT *a1;
-  for (int i = 0; i < swarm_count; i++) {
-    a1 = nest[i];
-    a1->start_node = rand() % dim_;
-    a1->index = 0;
-    a1->cost = 9999;
-    for (int j = 0; j < dim_; j++) {
-      a1->visited[j] = 0;
-      a1->trail[j] = 0;
-    }
-    a1->trail[a1->index] = a1->start_node;
-    a1->visited[a1->start_node] = 1;
-    a1->index++;
-  }
-}
-
-#endif

@@ -1,6 +1,3 @@
-#ifndef UTILS_H
-#define UTILS_H
-
 void calculate_distance(double nodes[2][dim], int distances[dim][dim]) {
   for (size_t i = 0; i < dim; i++) {
     for (size_t j = 0; j < dim; j++) {
@@ -38,5 +35,3 @@ int find_index(int *sol, int val) {
   }
   return -1;
 }
-
-#endif

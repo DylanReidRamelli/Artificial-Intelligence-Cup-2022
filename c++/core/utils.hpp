@@ -17,12 +17,12 @@ int compute_length(std::vector<int> solution,
   return total_length;
 }
 
-int distance_euc(std::vector<float> points_x, std::vector<float> points_y) {
+int distance_euc(std::vector<int> points_x, std::vector<int> points_y) {
   int rounding = 0;
-  float x_i = points_x[0];
-  float y_i = points_x[1];
-  float x_j = points_y[0];
-  float y_j = points_y[1];
+  int x_i = points_x[0];
+  int y_i = points_x[1];
+  int x_j = points_y[0];
+  int y_j = points_y[1];
   float distance = sqrt(pow((x_i - x_j), 2) + pow((y_i - y_j), 2));
   return floor(distance);
 }

@@ -1,3 +1,4 @@
+#include "acs.hpp"
 #include "io_tsp.hpp"
 #include "utils.hpp"
 #include <filesystem>
@@ -33,15 +34,13 @@ void run(const bool show_plots = false, const bool verbose = false) {
     // Create ProblemInstance.
     ProblemInstance problem(problem_path);
     // Choose solver.
+    problem.print_info();
 
     // Chose improve.
   }
 }
 
 int main(int argv, const char *argc[]) {
-
-  std::vector<int> solution[4];
-  std::vector<std::vector<int>> dist_matrix[4][4];
 
   run();
 

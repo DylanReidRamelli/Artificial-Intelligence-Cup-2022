@@ -34,6 +34,24 @@ public:
     boost::split(t, data[5], boost::is_any_of(": "));
     best_sol_ = std::stoi(t[t.size() - 1]);
 
+    points_ =
+        std::vector<std::vector<double>>(2, std::vector<double>(nPoints_));
+
+    // store data
+
+    for (int i = 7; i < nPoints_; i++) {
+      boost::split(t, data[i], boost::is_any_of(" "));
+      int index = stoi(t[0]);
+      double x = stoi(t[1]);
+      double y = stoi(t[2]);
+
+      std::cout << index << std::endl;
+      std::cout << x << std::endl;
+      std::cout << y << std::endl;
+      points_[0][index - 1] = x;
+      points_[1][index - 1] = y;
+    }
+
     create_dist_matrix();
   }
 
@@ -46,22 +64,25 @@ public:
   }
 
   void create_dist_matrix() {
-    dist_matrix_.resize(nPoints_ * nPoints_);
-    for (int i = 0; i < nPoints_; i++) {
-      for (int j = i; j < nPoints_; j++) {
-        std::vector<int> rowi = points_[i];
-        std::vector<int> rowj = points_[j];
-        auto firsti = rowi.begin() + 1;
-        auto lasti = rowi.begin() + 3;
-        auto firstj = rowj.begin() + 1;
-        auto lastj = rowj.begin() + 3;
-        std::vector<int> subi(firsti, lasti);
-        std::vector<int> subj(firstj, lastj);
+    dist_matrix_ =
+        std::vector<std::vector<int>>(nPoints_, std::vector<int>(nPoints_));
 
-        dist_matrix_[j][i] = distance_euc(subi, subj);
+    for (int i = 0; i < nPoints_; i++) {
+      for (int j = 0; j < nPoints_; j++) {
+        if (j == i) {
+          dist_matrix_[i][j] = 9999;
+          dist_matrix_[j][i] = 9999;
+        } else {
+          double x_sq = pow(points_[0][i] - points_[0][j], 2);
+          double y_sq = pow(points_[1][i] - points_[1][j], 2);
+          dist_matrix_[i][j] = sqrt(x_sq + y_sq);
+          dist_matrix_[j][i] = sqrt(x_sq + y_sq);
+        }
       }
     }
   }
+
+  int getnPoints() { return nPoints_; }
 
 private:
   bool exist_opt_ = false;
@@ -70,7 +91,7 @@ private:
   std::string name_;
   int nPoints_;
   int best_sol_;
-  std::vector<std::vector<int>> points_;
+  std::vector<std::vector<double>> points_;
   std::string file_name_;
 };
 

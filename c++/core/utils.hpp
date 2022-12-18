@@ -27,4 +27,21 @@ int distance_euc(std::vector<int> points_x, std::vector<int> points_y) {
   return floor(distance);
 }
 
+void calculate_distance(std::vector<std::vector<int>> nodes,
+                        std::vector<std::vector<int>> distances, int dim) {
+  for (size_t i = 0; i < dim; i++) {
+    for (size_t j = 0; j < dim; j++) {
+      if (j == i) {
+        distances[i][j] = 9999;
+        distances[j][i] = 9999;
+      } else {
+        double x_sq = pow(nodes[0][i] - nodes[0][j], 2);
+        double y_sq = pow(nodes[1][i] - nodes[1][j], 2);
+        distances[i][j] = sqrt(x_sq + y_sq);
+        distances[j][i] = sqrt(x_sq + y_sq);
+      }
+    }
+  }
+}
+
 #endif

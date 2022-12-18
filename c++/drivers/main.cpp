@@ -30,14 +30,17 @@ void run(const bool show_plots = false, const bool verbose = false) {
 
   // Iterate over the problems
 
-  for (auto problem_path : file_list) {
-    // Create ProblemInstance.
-    ProblemInstance problem(problem_path);
-    // Choose solver.
-    problem.print_info();
+  ProblemInstance problem(file_list[0]);
+  problem.print_info();
 
-    // Chose improve.
-  }
+  // for (auto problem_path : file_list) {
+  //   // Create ProblemInstance.
+  //   ProblemInstance problem(problem_path);
+  //   // Choose solver.
+  //   problem.print_info();
+
+  //   // Chose improve.
+  // }
 }
 
 int main(int argv, const char *argc[]) {

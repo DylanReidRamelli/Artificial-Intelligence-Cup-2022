@@ -9,6 +9,18 @@
 #include <vector>
 class ProblemInstance {
 public:
+  bool exist_opt_ = false;
+  std::vector<int> optimal_tour_;
+  std::vector<std::vector<int>> dist_matrix_;
+  std::vector<std::vector<double>> pheromone_;
+  std::string name_;
+  int nPoints_;
+  int best_sol_;
+  std::vector<std::vector<double>> points_;
+  std::string file_name_;
+
+  std::vector<int> new_sol;
+
   std::vector<std::string> read_file(std::string file_name) {
     std::string line;
     std::vector<std::string> data;
@@ -53,6 +65,17 @@ public:
     }
 
     create_dist_matrix();
+    pheromone_ = std::vector<std::vector<double>>(
+        nPoints_, std::vector<double>(nPoints_));
+
+    for (int m = 0; m < nPoints_; m++) {
+      for (int k = 0; k < nPoints_; k++) {
+        pheromone_[m][k] = 1;
+        pheromone_[k][m] = 1;
+      }
+    }
+
+    new_sol = std::vector<int>(nPoints_);
   }
 
   void print_info() {
@@ -83,16 +106,6 @@ public:
   }
 
   int getnPoints() { return nPoints_; }
-
-private:
-  bool exist_opt_ = false;
-  std::vector<int> optimal_tour_;
-  std::vector<std::vector<int>> dist_matrix_;
-  std::string name_;
-  int nPoints_;
-  int best_sol_;
-  std::vector<std::vector<double>> points_;
-  std::string file_name_;
 };
 
 #endif

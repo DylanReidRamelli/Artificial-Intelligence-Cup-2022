@@ -50,6 +50,25 @@ void run(const bool show_plots = false, const bool verbose = false) {
     nest[i].trail = std::vector<int>(problem.nPoints_);
     nest[i].visited = std::vector<int>(problem.nPoints_);
   }
+
+  // std::cout << problem.dist_matrix_ << std::endl;
+  // std::cout << problem.pheromone_ << std::endl;
+  // std::cout << problem.new_sol << std::endl;
+  // std::cout << problem.nPoints_ << std::endl;
+
+  // print info of pheromone matrix
+  // for (int i = 0; i < problem.nPoints_; i++) {
+  //   for (int j = 0; j < problem.nPoints_; j++) {
+  //     std::cout << problem.pheromone_[i][j] << std::endl;
+  //   }
+  // }
+
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < problem.nPoints_; j++) {
+      std::cout << problem.dist_matrix_[i][j] << std::endl;
+    }
+  }
+
   // while (test != 0) {
   acs(nest, swarm_count, problem.dist_matrix_, problem.pheromone_,
       problem.new_sol, problem.nPoints_);
